@@ -1,5 +1,6 @@
 package com.auth0.samples.authapi.task;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +33,10 @@ public class TaskController {
 		return taskRepository.findAll();
 	}
 
+	@GetMapping("/me")
+	public List<Task> getTasksAdmin() {
+		return taskRepository.findAll();
+	}
 	@PutMapping("/{id}")
 	public void editTask(@PathVariable long id, @RequestBody Task task) {
 		Task existingTask = taskRepository.findOne(id);
