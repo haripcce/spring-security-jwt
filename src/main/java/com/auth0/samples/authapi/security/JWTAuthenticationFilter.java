@@ -8,8 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -18,9 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import static com.auth0.samples.authapi.security.SecurityConstants.EXPIRATION_TIME;
 import static com.auth0.samples.authapi.security.SecurityConstants.HEADER_STRING;
@@ -41,15 +37,15 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			ApplicationUser creds = new ObjectMapper()
 					.readValue(req.getInputStream(), ApplicationUser.class);
 
-			List<GrantedAuthority> authorities = new ArrayList<>();
+			/*List<GrantedAuthority> authorities = new ArrayList<>();
 
-			authorities.add(new SimpleGrantedAuthority("ROLE_"+creds.getUsername().toUpperCase()));
+			authorities.add(new SimpleGrantedAuthority("ROLE_"+creds.getEmail().toUpperCase()));*/
 
 
 			return authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(
-							creds.getUsername(),
-							creds.getPassword(), authorities)
+							creds.getEmail(),
+							creds.getPassword(), null)
 			);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
