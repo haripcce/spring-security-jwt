@@ -38,8 +38,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 				.anyRequest().authenticated()
 				.and()
 				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
-				.addFilterBefore(
-						new CustomFilter(), UsernamePasswordAuthenticationFilter.class)
+				.addFilter(new JWTAuthorizationFilter(authenticationManager()))
+				/*.addFilterBefore(
+						new CustomFilter(), UsernamePasswordAuthenticationFilter.class)*/
 				// this disables session creation on Spring Security
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
@@ -52,7 +53,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000/","http://localhost:3000","http://localhost:8080/"));
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000/","http://localhost:3000","http://localhost:8080/","http://localhost:5555/","*"));
 		configuration.setAllowedMethods(Arrays.asList("HEAD",
 				"GET", "POST", "PUT", "DELETE", "PATCH"));
 		// setAllowCredentials(true) is important, otherwise:
