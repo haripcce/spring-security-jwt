@@ -1,5 +1,8 @@
 package com.auth0.samples.authapi.user;
 
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,9 +22,17 @@ public class UserController {
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
 	}
 
-	@PostMapping("/sign-up")
-	public ApplicationUser signUp(@RequestBody ApplicationUser user) {
+	@PostMapping(value = "/sign-up",produces = "application/json")
+	public ResponseEntity<?> signUp(@RequestBody ApplicationUser user) {
 		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-		return  applicationUserRepository.save(user);
+		ApplicationUser createdUser = null;
+		try {
+			createdUser = applicationUserRepository.save(user);
+			return new ResponseEntity<ApplicationUser>(createdUser, HttpStatus.CREATED);
+		} catch (DataIntegrityViolationException e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>("{\"errors\":{\"email\" : \"This email is already taken\"}}", HttpStatus.BAD_REQUEST);
+		}
+
 	}
 }
