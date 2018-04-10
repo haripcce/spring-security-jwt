@@ -11,6 +11,16 @@ public class ApplicationUser {
 	private String email;
 	private String password;
 	private String role;
+	private boolean confirmed;
+
+	public boolean isConfirmed() {
+		return confirmed;
+	}
+
+	public void setConfirmed(boolean confirmed) {
+		this.confirmed = confirmed;
+	}
+
 	public long getId() {
 		return id;
 	}

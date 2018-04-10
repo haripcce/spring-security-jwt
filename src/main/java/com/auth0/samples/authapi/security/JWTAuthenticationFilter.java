@@ -1,6 +1,7 @@
 package com.auth0.samples.authapi.security;
 
 import com.auth0.samples.authapi.user.ApplicationUser;
+import com.auth0.samples.authapi.user.ApplicationUserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -58,14 +59,18 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 											FilterChain chain,
 											Authentication auth) throws IOException, ServletException {
 
+		ApplicationUserRepository userRepo = Context.getContext().getBean(ApplicationUserRepository.class);
+		ApplicationUser user = userRepo.findByEmail(((User) auth.getPrincipal()).getUsername());
 		String token = Jwts.builder()
 				.setSubject(((User) auth.getPrincipal()).getUsername())
+				.claim("confirmed",user.isConfirmed())
 				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
 				.signWith(SignatureAlgorithm.HS512, SECRET.getBytes())
 				.compact();
 		res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
 		String responseContent = new String("{\"user\":{\"email\":\"" + ((User) auth.getPrincipal()).getUsername() + "\"" +
-				",\"token\":\"" + token + "\"}" +
+				",\"token\":\"" + token + "\"" +
+				"}" +
 				"}");
 
 		res.setContentType("text/json");

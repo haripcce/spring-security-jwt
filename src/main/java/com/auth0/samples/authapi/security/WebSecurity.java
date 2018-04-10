@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.Arrays;
 
-import static com.auth0.samples.authapi.security.SecurityConstants.SIGN_UP_URL;
+import static com.auth0.samples.authapi.security.SecurityConstants.*;
 
 @EnableWebSecurity
 public class WebSecurity extends WebSecurityConfigurerAdapter {
@@ -32,7 +32,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().authorizeRequests()
-				.antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
+				.antMatchers(HttpMethod.POST, SIGN_UP_URL,CONFIRMATION_URL,REST_PASSWORD_URL,VALIDATE_TOKEN_URL,RESETPASS_UPDATE_URL).permitAll()
 				.antMatchers(HttpMethod.GET, "/tasks/me").hasRole("ADMIN")
 				.antMatchers(HttpMethod.GET, "/tasks/**").access("hasRole('ROLE_USER')")
 				.anyRequest().authenticated()
