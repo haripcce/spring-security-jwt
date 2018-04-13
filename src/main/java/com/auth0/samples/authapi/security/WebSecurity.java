@@ -33,8 +33,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().authorizeRequests()
 				.antMatchers(HttpMethod.POST, SIGN_UP_URL,CONFIRMATION_URL,REST_PASSWORD_URL,VALIDATE_TOKEN_URL,RESETPASS_UPDATE_URL).permitAll()
-				.antMatchers(HttpMethod.GET, "/tasks/me").hasRole("ADMIN")
-				.antMatchers(HttpMethod.GET, "/tasks/**").access("hasRole('ROLE_USER')")
+				/*.antMatchers(HttpMethod.GET, "/tasks/me").hasRole("ADMIN")
+				.antMatchers(HttpMethod.GET, "/tasks/**").access("hasRole('ROLE_USER')")*/
 				.anyRequest().authenticated()
 				.and()
 				.addFilter(new JWTAuthenticationFilter(authenticationManager()))

@@ -1,19 +1,19 @@
 package com.auth0.samples.authapi.user;
 
+import com.auth0.samples.authapi.task.TasksResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -107,6 +107,16 @@ public class UserController {
 
 	}
 
+	@GetMapping(value = "/me", produces = "application/json")
+	public ResponseEntity<?> getTasks() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String userName = (String) auth.getPrincipal();
+		ApplicationUser user = applicationUserRepository.findByEmail(userName);
+		if (user != null) {
+			return new ResponseEntity<ApplicationUser>(user, HttpStatus.OK);
+		}
+		return new ResponseEntity<String>("{\"errors\":{\"global\" : \"User not found\"}}", HttpStatus.NOT_FOUND);
+	}
 	@PostMapping(value = "/validate_token", produces = "application/json")
 	public ResponseEntity<?> validateToken(@RequestBody ConfirmationToken token) {
 

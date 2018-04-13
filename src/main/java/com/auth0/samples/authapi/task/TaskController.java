@@ -1,15 +1,9 @@
 package com.auth0.samples.authapi.task;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,13 +18,16 @@ public class TaskController {
 	}
 
 	@PostMapping
-	public void addTask(@RequestBody Task task) {
+	public Task addTask(@RequestBody Task task) {
 		taskRepository.save(task);
+		return task;
 	}
 
 	@GetMapping
-	public List<Task> getTasks() {
-		return taskRepository.findAll();
+	public TasksResponse getTasks(@RequestParam(name = "query", required = false) String query) {
+		TasksResponse response = new TasksResponse();
+		response.setBooks(taskRepository.findByTitleContaining(query!=null?query:""));
+		return response;
 	}
 
 	@GetMapping("/me")
@@ -41,7 +38,7 @@ public class TaskController {
 	public void editTask(@PathVariable long id, @RequestBody Task task) {
 		Task existingTask = taskRepository.findOne(id);
 		Assert.notNull(existingTask, "Task not found");
-		existingTask.setDescription(task.getDescription());
+		//existingTask.setDescription(task.getDescription());
 		taskRepository.save(existingTask);
 	}
 
